@@ -1,6 +1,6 @@
 require "google_drive"
 
-def find_password_from_google_spreadsheet(session, spreadsheet_id, target_key)
+def find_credential_value_from_google_spreadsheet(session, spreadsheet_id, target_key)
   ws = session.spreadsheet_by_key(spreadsheet_id).worksheets.first
   (1..ws.num_rows).each do |row|
     key = ws[row, 1].strip
