@@ -4,3 +4,4 @@ source "https://rubygems.org"
 gem 'dotenv'
 gem 'furik'
 gem 'google_drive'
+gem 'wunderlist-api'

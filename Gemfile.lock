@@ -67,6 +67,8 @@ GEM
       multi_json (~> 1.10)
     thor (0.19.4)
     uber (0.1.0)
+    wunderlist-api (1.1.2)
+      faraday (~> 0.9.1)
 
 PLATFORMS
   ruby
@@ -75,6 +77,7 @@ DEPENDENCIES
   dotenv
   furik
   google_drive
+  wunderlist-api
 
 BUNDLED WITH
    1.13.6
