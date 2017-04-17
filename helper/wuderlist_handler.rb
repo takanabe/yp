@@ -20,7 +20,7 @@ class Wunderlist
       tasks = api_request(request_url)
       tasks.each do |task|
         time_diff = (Date.parse(Date.today.to_s) - Date.parse(task["completed_at"])).to_i
-        completed_tasks << task["title"] if time_diff == 1
+        completed_tasks << task["title"] if time_diff == 0
       end
     end
     completed_tasks
