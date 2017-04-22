@@ -3,27 +3,59 @@ require 'json'
 class Wunderlist
   API_URL = 'https://a.wunderlist.com/api/v1/'
 
-  attr_reader :ids
+  attr_reader :ids, :completed_tasks
+
+  def initialize
+    @list_ids = []
+    @completed_tasks = {}
+  end
 
   def fetch_all_lists_from_folder(foldername)
     request_url = create_url('folders')
     res = api_request(request_url)
-    res.collect do  |list|
-      @ids = list["list_ids"] if list["title"] == foldername
+    res.collect do  |folder|
+      @list_ids = folder["list_ids"] if folder["title"] == foldername
     end
   end
 
+  def fetch_list_name(list_id)
+    request_url = create_url("lists/#{list_id}")
+    list = api_request(request_url)
+    list["title"]
+  end
+
   def fetch_completed_tasks_for_list
-    completed_tasks = []
-    @ids.each do |id|
-      request_url = create_url_with_params('tasks',{list_id: id, completed: true})
+    @list_ids.each do |list_id|
+      completed_tasks = []
+      request_url = create_url_with_params('tasks',{list_id: list_id, completed: true})
       tasks = api_request(request_url)
       tasks.each do |task|
         time_diff = (Date.parse(Date.today.to_s) - Date.parse(task["completed_at"])).to_i
-        completed_tasks << task["title"] if time_diff == 0
+        if time_diff == 0
+          completed_tasks << task["title"]
+        end
+      end
+      unless completed_tasks.empty?
+        @completed_tasks[fetch_list_name(list_id)] = completed_tasks
       end
     end
-    completed_tasks
+  end
+
+  def fetch_completed_tasks_for_list_yesterday
+    @list_ids.each do |list_id|
+      completed_tasks = []
+      request_url = create_url_with_params('tasks',{list_id: list_id, completed: true})
+      tasks = api_request(request_url)
+      tasks.each do |task|
+        time_diff = (Date.parse(Date.today.to_s) - Date.parse(task["completed_at"])).to_i
+        if time_diff == 1
+          completed_tasks << task["title"]
+        end
+      end
+      unless completed_tasks.empty?
+        @completed_tasks[fetch_list_name(list_id)] = completed_tasks
+      end
+    end
   end
 
   def headers
